@@ -1,44 +1,23 @@
 from flask import Flask, request
 import json
-from Models.db import Users
+from Models.db import *
 from Responses.resps import *
 from Dielogs.functions import *
 
 app = Flask(__name__)
 
+users_table = Users()
+pulse_table = Pulse()
 
-def main():
-    users = Users()
-    req = request.json
-    print(req)
-    if len(req['request']['nlu']['tokens']) > 0:
-        if req['request']['nlu']['tokens'][0] == 'зарегистрироваться' and not users.CheckUserExist(req['session']['user']['user_id']):
-            context = req['request']['nlu']['tokens']
-            users.InsertNewUser(req['session']['user']['user_id'], req['request']['nlu']['tokens'][1], req['request']['nlu']['tokens'][2], int(req['request']['nlu']['tokens'][3]))
-            res = ReturnSuccessRegisterMessage(req)
-            print("Прошла рекистрация")
-        else:
-            res = ReturnFirstHelloMessage(req)
-            print("Первое приветственное сообщение")
-    elif not users.CheckUserExist(req['session']['user']['user_id']):
-        res = ReturnFirstHelloMessage(req)
-        print("Первое приветственное сообщение")
-    else:
-        res = ReturnHelloMessage(req)
-        print("Приветственное сообщение")
-
-    print("REQUEST: -------------------------")
-    print(req)
-    print("RESPONSE: ------------------------")
-    print(res)
-    del users
-    return json.dumps(res, indent=2)
 
 @app.route('/', methods=['POST'])
 def _main():
     print('new request')
-    users_table = Users()
     req = request.json
+
+    print("REQUEST: -------------------------")
+    print(req)
+
     if len(req['request']['nlu']['tokens']) == 0 and not users_table.CheckUserExist(req['session']['user']['user_id']):
         print('new user')
         res = FirstHelloProcedure(req)
@@ -48,11 +27,16 @@ def _main():
     elif req['request']['nlu']['tokens'][0] == 'зарегистрироваться' and not users_table.CheckUserExist(req['session']['user']['user_id']):
         print('registration')
         res = RegisterProcedure(req, users_table)
-
+    elif req['request']['nlu']['tokens'][0] == 'пульс' and users_table.CheckUserExist(req['session']['user']['user_id']):
+        print('wrote pulse')
+        res = InsertNewPulseProcedure(req, users_table, pulse_table)
+    elif req['request']['command'] == 'помощь':
+        res = OuputHelpingMessage(req)
+    elif req['request']['command'] == 'статистика':
+        res = OutputLastStatistic(req, users_table, pulse_table)
     else:
         res = DontUnderstandProcedure(req)
-    print("REQUEST: -------------------------")
-    print(req)
+
     print("RESPONSE: ------------------------")
     print(res)
 

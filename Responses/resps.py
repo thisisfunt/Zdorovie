@@ -10,6 +10,15 @@ def ReturnFirstHelloMessage(req):
         }
     }
 
+def ReturnHelpingMessage(req):
+    return {
+        'version': req['version'],
+        'session': req['session'],
+        'response': {
+            'text': 'Привет! Ты можешь использовать следующие команды \n\tПульс {число ударов} - Записать число ударов\n\tПомощь - вывести это сообщение',
+            'end_session': False
+        }
+    }
 
 def ReturnSuccessRegisterMessage(req):
     return {
@@ -41,3 +50,26 @@ def ReturnDontUnderstandMessage(req):
         }
     }
 
+def ReturnPulseDetectedMessage(req):
+    return {
+        'version': req['version'],
+        'session': req['session'],
+        'response': {
+            'text': 'Ваш пульс записан в базу',
+            'end_session': False
+        }
+    }
+
+def ReturnUserStat(req, pulse_stat):
+    res = {
+        'version': req['version'],
+        'session': req['session'],
+        'response': {
+            'text': '',
+            'end_session': False
+        }
+    }
+    res['response']['text'] += 'Статистика Пульса:\n'
+    for string in pulse_stat:
+        res['response']['text'] += f'{string[0]} - {string[1]} Ударов \n'
+    return res
