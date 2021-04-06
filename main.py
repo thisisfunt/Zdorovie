@@ -1,8 +1,10 @@
 from flask import Flask, request
 import json
 from Models.db import *
-from Responses.resps import *
-from Dielogs.functions import *
+from Dielogs.DefaultMessages import *
+from Dielogs.RegistrationMessages import *
+from Dielogs.UserStatOperations import *
+
 
 app = Flask(__name__)
 
@@ -33,7 +35,7 @@ def _main():
     elif req['request']['command'] == 'помощь':
         res = OuputHelpingMessage(req)
     elif req['request']['command'] == 'статистика':
-        res = OutputLastStatistic(req, users_table, pulse_table)
+        res = ReturnLastStatistic(req, users_table, pulse_table)
     else:
         res = DontUnderstandProcedure(req)
 
