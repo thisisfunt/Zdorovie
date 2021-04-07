@@ -5,7 +5,7 @@ from datetime import datetime
 
 def InsertNewPulseProcedure(req, user_table, pulse_table):
     date = datetime.now()
-    date = date.strftime('%d/%m/%Y %H:%M')
+    date = date.strftime('%d/%m/20%y %H:%M')
     pulse_count = int(req['request']['nlu']['tokens'][1])
     user_id_in_yandex = req['session']['user']['user_id']
     user_id = user_table.GetUserData(user_id_in_yandex)[0]
