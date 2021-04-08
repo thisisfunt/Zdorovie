@@ -1,16 +1,17 @@
-from flask import Flask, request
+from flask import Flask, request, make_response, render_template, redirect
 import json
 from Models.db import *
 from Dielogs.DefaultMessages import *
 from Dielogs.RegistrationMessages import *
 from Dielogs.UserStatOperations import *
+from Models import *
 
 
 app = Flask(__name__)
 
 users_table = Users()
 pulse_table = Pulse()
-
+au_table = AdminUsers()
 
 @app.route('/', methods=['POST'])
 def _main():
@@ -43,6 +44,19 @@ def _main():
     print(res)
 
     return json.dumps(res, indent=2)
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    res = make_response(render_template('index.html'))
+    if request.method == 'POST' and not request.cookies.get('login') and not request.cookies.get('password'):
+        if au_table.CheckUserExist(request.form['login'], request.form['password']):
+            res.set_cookie('login', request.form['login'])
+            res.set_cookie('password', request.form['password'])
+    elif 'login' in request.cookies and 'password' in request.cookies:
+        if au_table.CheckUserExist(request.form['login'], request.form['password']):
+            return redirect("/admin")
+    return res
 
 
 

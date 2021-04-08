@@ -55,3 +55,27 @@ class Pulse:
             """)
             result = _cur.fetchall()
             return result
+
+
+class AdminUsers:
+    def InsertNewUser(login : str, password : str, role : str) -> None:
+        with sqlite3.connect(db_path) as con:
+            _cur = con.cursor()
+            _cur.execute(
+            f"""
+                INSERT INTO AdminUsers (login, password, role) VALUES(
+                    '{login}',
+                    '{password}',
+                    '{role}'
+                )
+            """)
+            con.commit()
+
+    def CheckUserExist(self, login : str, password : str) -> bool:
+        with sqlite3.connect(db_path) as con:
+            _cur = con.cursor()
+            _cur.execute(f"""
+                SELECT * FROM AdminUsers WHERE login = "{login}" AND password = "{password}"
+            """)
+            result = _cur.fetchall()
+            return len(result) > 0
