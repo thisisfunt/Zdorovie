@@ -1,5 +1,5 @@
 from Responses.DefaultMessages import *
-
+from Models.db import Users
 
 def FirstHelloProcedure(req):
     res = ReturnFirstHelloMessage(req)
@@ -15,4 +15,8 @@ def DontUnderstandProcedure(req):
 
 def OuputHelpingMessage(req):
     res = ReturnHelpingMessage(req)
+    return res
+
+def UserIDMessage(req):
+    res = ReturnUserIDMessage(req, Users().GetUserData(req['session']['user']['user_id'])[0])
     return res
